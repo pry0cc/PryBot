@@ -1,11 +1,12 @@
 #!/usr/bin/env python2
 
-from creds import Creds
+import threading
 import urllib2
-from bs4 import BeautifulSoup
 import Legobot
 import subprocess
 import time
+from creds import Creds
+from bs4 import BeautifulSoup
 from pydiscourse.client import DiscourseClient
 
 creds = Creds()
@@ -24,6 +25,10 @@ def NickfromMsg(msg):
 def UrlFromID(id):
   data = client.topic_posts(id)["post_stream"]["posts"][0]
   return "https://0x00sec.org/t/%s/%s" % (data["topic_slug"], data["topic_id"])
+
+
+def Reconnect():
+
 
 def join(msg):
     myBot.sendMsg("JOIN " + msg.arg1 + "\r\n")
