@@ -78,6 +78,17 @@ def latest(msg):
 
     return output
 
+def wiki_search(msg):
+    import requests
+    if not arg.1:
+      return "Wikipedia Top Finder. Search English Wikipedia for an article. Usage: !wtf [query]"
+    baseurl = 'https://en.wikipedia.org/w/index.php?search='
+    search_params = '%20'.join(msg.splitMessage[4:])
+    r = requests.get(baseurl+search_params)
+    if r.status_code == 200:
+        return "I found this: " + r.url
+    else:
+        return "I could not reach Wikipedia. Sorry."
 myBot.setThrottle(0.5)
 # myBot.addFunc("!latest", latestTopics, "Ask your bot to say hello. Usage: !helloworld")
 # myBot.addFunc("!topic", topic, "Ask your bot to say hello. Usage: !helloworld")
