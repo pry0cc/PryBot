@@ -18,12 +18,8 @@ CHANS = creds.CHANS
 myBot = Legobot.legoBot(host=HOST,port=PORT,nick=NICK,nickpass=PASS,chans=CHANS)
 client = DiscourseClient('https://0x00sec.org', api_username='localhost', api_key=creds.API_KEY)
 
-# def latestTopics(msg):
-#     p = subprocess.Popen('ruby discourse.rb latest', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-#     return p.stdout.readlines()
-# def topic(msg):
-#     p = subprocess.Popen('ruby discourse.rb topic ' + msg.arg1 + ' ' + msg.actualUserName, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-#     return p.stdout.readlines()
+def NickfromMsg(msg):
+    return msg.splitMessage[0].split("!")[0][1:]
 
 def UrlFromID(id):
   data = client.topic_posts(id)["post_stream"]["posts"][0]
@@ -67,7 +63,7 @@ def whois(msg):
     return output_str
 
 def topic(msg):
-    return UrlFromID(msg.arg1)
+    return NickfromMsg(msg) + ": " + UrlFromID(msg.arg1)
 
 def latest(msg):
     data = client.latest_topics()["topic_list"]["topics"]
@@ -86,17 +82,22 @@ def wiki_search(msg):
     search_params = '%20'.join(msg.splitMessage[4:])
     r = requests.get(baseurl+search_params)
     if r.status_code == 200:
-        return "I found this: " + r.url
+        return NickfromMsg(msg) + ": I found this: " + r.url
     else:
-        return "I could not reach Wikipedia. Sorry."
+        return NickfromMsg(msg) + ": I could not reach Wikipedia. Sorry."
+
+def greet(msg):
+    return "Hello %s!" % (NickfromMsg(msg))
+
+
+### Add functions to the Bot.
 myBot.setThrottle(0.5)
-# myBot.addFunc("!latest", latestTopics, "Ask your bot to say hello. Usage: !helloworld")
-# myBot.addFunc("!topic", topic, "Ask your bot to say hello. Usage: !helloworld")
 myBot.addFunc("!join", join, "Be a total bitch and annoy other channels. Usage: !join #channel")
 myBot.addFunc("!whois", whois, "Find out who somebody is on 0x00sec.org! Usage !whois username")
 myBot.addFunc("!topic", topic, "Get the URL of a topic. Usage !topic 882")
 myBot.addFunc("!latest", latest, "Get a list of the Latest Posts on 0x00sec. Usage !latest")
 myBot.addFunc("!wtf", wiki_search, "Search Wikipedia. Usage !wtf search")
+myBot.addFunc("hello", greet, "Say hello. Usage " + NICK +  ": hello")
 
-
+### Connect to the IRC - Bot will not run without this, anycode after will not run.
 myBot.connect(isSSL=False)
