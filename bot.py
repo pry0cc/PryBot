@@ -16,7 +16,7 @@ PASS = creds.PASS
 CHANS = creds.CHANS
 
 myBot = Legobot.legoBot(host=HOST,port=PORT,nick=NICK,nickpass=PASS,chans=CHANS)
-client = DiscourseClient('https://0x00sec.org', api_username='localhost', api_key='d0bd4d247c1bfe7a04a64081e9348dc95abbe145f2ae758fccbc300b242252f1')
+client = DiscourseClient('https://0x00sec.org', api_username='localhost', api_key=creds.API_KEY)
 
 # def latestTopics(msg):
 #     p = subprocess.Popen('ruby discourse.rb latest', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -80,7 +80,7 @@ def latest(msg):
 
 def wiki_search(msg):
     import requests
-    if not arg.1:
+    if not msg.arg1:
       return "Wikipedia Top Finder. Search English Wikipedia for an article. Usage: !wtf [query]"
     baseurl = 'https://en.wikipedia.org/w/index.php?search='
     search_params = '%20'.join(msg.splitMessage[4:])
@@ -96,5 +96,7 @@ myBot.addFunc("!join", join, "Be a total bitch and annoy other channels. Usage: 
 myBot.addFunc("!whois", whois, "Find out who somebody is on 0x00sec.org! Usage !whois username")
 myBot.addFunc("!topic", topic, "Get the URL of a topic. Usage !topic 882")
 myBot.addFunc("!latest", latest, "Get a list of the Latest Posts on 0x00sec. Usage !latest")
+myBot.addFunc("!wtf", wiki_search, "Search Wikipedia. Usage !wtf search")
+
 
 myBot.connect(isSSL=False)
